@@ -17,7 +17,9 @@ jobs:
     - run: |
         cd google-api-tests
         npm install
+        pwd
         npm run test:ci
+        npm run test:report
 
     - name: Upload Google API report
       uses: actions/upload-artifact@v4

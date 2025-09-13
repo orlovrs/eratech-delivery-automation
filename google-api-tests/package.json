@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "test": "cucumber-js",
-    "test:ci": "cucumber-js --format json:reports/cucumber_report.json & node report.js",
-    "test:ci:only": "cucumber-js --format json:reports/cucumber_report.json --tags \"@only\" & node report.js"
+    "test:ci": "cucumber-js --format json:reports/cucumber_report.json",
+    "test:report": "node report.js",
+    "test:only": "cucumber-js --format json:reports/cucumber_report.json --tags \"@only\" & node report.js"
   },
   "dependencies": {
     "axios": "^1.12.1",

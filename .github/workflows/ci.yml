@@ -24,4 +24,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.PAT }}
-        publish_dir: ./google-api-tests/reports/cucumber_report.html
+        publish_dir: ./reports/cucumber_report.html

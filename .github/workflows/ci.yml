@@ -16,7 +16,11 @@ concurrency:
 jobs:
   test-google-api:
     runs-on: ubuntu-latest
-    
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
     - uses: actions/checkout@v4
     - name: setup nodejs
@@ -33,22 +37,12 @@ jobs:
       with:
         name: google-api-report
         path: google-api-tests/reports/cucumber_report.html
-
-  deploy:
-    needs:
-      - test-google-api
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./google-api-tests/reports/cucumber_report.html
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./google-api-tests/reports/cucumber_report.html
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

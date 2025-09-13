@@ -40,10 +40,14 @@ jobs:
 
     - name: Setup Pages
       uses: actions/configure-pages@v5
+    - name: Prepare artifact folder
+      run: |
+        mkdir -p page
+        cp google-api-tests/reports/cucumber_report.html page/index.html
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: './google-api-tests/reports/cucumber_report.html'
+        path: ./page
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4

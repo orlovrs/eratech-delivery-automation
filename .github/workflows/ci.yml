@@ -19,9 +19,27 @@ jobs:
         npm install
         npm run test:ci
         npm run test:report
-
-    - name: Deploy to GH Pages
-      uses: peaceiris/actions-gh-pages@v4
+    - name: Upload Google API report
+      uses: actions/upload-artifact@v4
       with:
-        github_token: ${{ secrets.PAT }}
-        publish_dir: ./reports/cucumber_report.html
+        name: google-api-report
+        path: google-api-tests/reports/cucumber_report.html
+
+  deploy:
+    needs: test-google-api
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: google-api-report

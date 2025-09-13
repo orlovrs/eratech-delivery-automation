@@ -35,6 +35,8 @@ jobs:
         path: google-api-tests/reports/cucumber_report.html
 
   deploy:
+    needs:
+      - test-google-api
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

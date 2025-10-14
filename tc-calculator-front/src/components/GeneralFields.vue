@@ -1,6 +1,15 @@
 <template>
-  <div class="mb-5" v-if="state">Загружаем данные сделки...</div>
-  <form class="mb-4" v-else>
+  <div class="mb-5" v-show="state">Загружаем данные сделки...</div>
+  <form class="mb-4" v-show="!state">
+    <div class="mb-3">
+      <label class="form-label">Откуда:</label>
+      <div class="d-flex gap-2">
+        <input type="text" class="form-control" placeholder="Индекс" v-model="fromAddress.zipCode"
+               style="width: 80px"/>
+        <input class="form-control" v-model="fromAddress.city"/>
+        <input type="text" class="form-control" placeholder="Улица" v-model="fromAddress.addressLine"/>
+      </div>
+    </div>
     <div class="mb-3">
       <label class="form-label">Дата забора (отгрузки):</label>
       <input type="date" class="form-control" v-model="formattedDeliveryDate"/>
@@ -88,13 +97,19 @@
       <label class="form-label">Примечание для ТК:</label>
       <textarea class="form-control" v-model="client.comments"></textarea>
     </div>
-    <button
-        type="button"
-        class="btn btn-primary"
-        @click="$emit('refresh')"
-    >
-      Обновить данные
-    </button>
+    <div class="mb-3">
+      <button
+          type="button"
+          class="btn btn-primary"
+          @click="$emit('getTariffs')"
+          :disabled="!isActive"
+      >
+        Обновить данные
+      </button>
+      <span v-show="!hasAddresses">
+        Для получения данных заполните индексы и города отбора/доставки
+      </span>
+    </div>
   </form>
 </template>
 <script>
@@ -106,7 +121,9 @@ export default {
     "cities",
     "packages",
     "standards",
-    "boxes"
+    "boxes",
+    "fromAddress",
+    "isActive",
   ],
   computed: {
     formattedDeliveryDate: {
@@ -118,6 +135,10 @@ export default {
         const [year, month, day] = value.split('-');
         this.client.deliveryDate = `${day}.${month}.${year}`;
       }
+    },
+    hasAddresses() {
+      return !!this.client.address.zipCode && !!this.client.address.city
+        && !!this.fromAddress.zipCode && !!this.fromAddress.city;
     }
   }
 }

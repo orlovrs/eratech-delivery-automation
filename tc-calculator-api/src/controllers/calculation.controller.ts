@@ -1,202 +1,109 @@
 import {Request, Response} from 'express';
 import {Class365Client, Class365Resources} from "../services/class365.client";
+import {CdekClient} from "../services/cdek.client";
+import {CdekService} from "../services/cdek.service";
+import {CdekDeliveryMode, DeliveryMode} from "../enums";
 
 const client = Class365Client.getClient();
+const cdek = new CdekClient();
+const cdekService = new CdekService();
+
 let token;
+const separators = ['мск+', 'utc+', 'gmt+'];
 
-export const postSamplesCalculation = (req: Request, res: Response): void => {
-    res
-        .status(200)
-        .json({
-            "door2door": [
-                {
-                    company: "СДЭК",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Экспресс",
-                    base: 400,
-                    pickup: 50,
-                    sms: 20,
-                    insurance: 0,
-                    total: 470,
-                    margin: "10%",
-                    clientPrice: 517
-                },
-                {
-                    company: "СДЭК",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Премиум",
-                    base: 480,
-                    pickup: 40,
-                    sms: 0,
-                    insurance: 30,
-                    total: 550,
-                    margin: "15%",
-                    clientPrice: 633
-                },
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Курьер",
-                    base: 460,
-                    pickup: 50,
-                    sms: 10,
-                    insurance: 0,
-                    total: 520,
-                    margin: "12%",
-                    clientPrice: 582
-                }
-            ],
-            "door2store": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ],
-            "store2door": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ],
-            "store2store": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ]
+export const postPackageCalculation = async (req: Request, res: Response) => {
+    const packages = req.body?.packages;
+    if (!packages) {
+        res.status(400).json({
+            error: "Нет информации о коробках"
         });
-};
+        return;
+    }
 
-export const postPackageCalculation = (req: Request, res: Response): void => {
-    res
-        .status(200)
-        .json({
-            "door2door": [
-                {
-                    company: "СДЭК",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Экспресс",
-                    base: 400,
-                    pickup: 50,
-                    sms: 20,
-                    insurance: 0,
-                    total: 470,
-                    margin: "10%",
-                    clientPrice: 517
-                },
-                {
-                    company: "СДЭК",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Премиум",
-                    base: 480,
-                    pickup: 40,
-                    sms: 0,
-                    insurance: 30,
-                    total: 550,
-                    margin: "15%",
-                    clientPrice: 633
-                },
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Курьер",
-                    base: 460,
-                    pickup: 50,
-                    sms: 10,
-                    insurance: 0,
-                    total: 520,
-                    margin: "12%",
-                    clientPrice: 582
-                }
-            ],
-            "door2store": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ],
-            "store2door": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ],
-            "store2store": [
-                {
-                    company: "Catapulto",
-                    deliveryTime: "1 д",
-                    extras: 360,
-                    tariff: "Эконом",
-                    base: 350,
-                    pickup: 0,
-                    sms: 20,
-                    insurance: 0,
-                    total: 370,
-                    margin: "10%",
-                    clientPrice: 407
-                },
-            ]
+    if (packages.length == 0) {
+        res.status(200).json({
+            error: "Не нужно считать доставку"
         });
+        return;
+    }
+
+    const from = req.body?.from;
+    if (!from.city) {
+        res.status(400).json({
+            error: "Не указан город отправления"
+        });
+        return;
+    }
+    if (!from.zipCode) {
+        res.status(400).json({
+            error: "Не указан индекс отправления"
+        });
+        return;
+    }
+
+    const toCity = req.body?.to;
+    if (!toCity.city) {
+        res.status(400).json({
+            error: "Не указан город доставки"
+        });
+        return;
+    }
+    if (!toCity.zipCode) {
+        res.status(400).json({
+            error: "Не указан индекс доставки"
+        });
+        return;
+    }
+
+    for (const s of separators) {
+        if (toCity.city.indexOf(s) != -1) {
+            toCity.city = toCity.city.split(s)[0].trim();
+        }
+    }
+
+    if (toCity.city.indexOf(' ') != -1) {
+        toCity.city = toCity.city.split(' ')[0];
+    }
+
+    try {
+        const fromCityObject = await cdek.findByCityAndZipCode(from.city, from.zipCode);
+        const toCityObject = await cdek.findByCityAndZipCode(toCity.city, toCity.zipCode);
+        const deliveryTariffs = await cdek.getDeliveryOptions(
+            fromCityObject,
+            toCityObject,
+            true,
+            req.body?.phone ? req.body.phone : null,
+            packages
+        );
+        const tariffsList = await cdek.getDeliveryTariffs();
+        res.status(200).json({
+            door2door: [
+                ...cdekService.findTariffs(CdekDeliveryMode.DOOR, CdekDeliveryMode.DOOR, deliveryTariffs, tariffsList)
+            ],
+            door2store: [
+                ...cdekService.findTariffs(CdekDeliveryMode.DOOR, CdekDeliveryMode.WAREHOUSE, deliveryTariffs, tariffsList)
+            ],
+            store2door: [
+                ...cdekService.findTariffs(CdekDeliveryMode.WAREHOUSE, CdekDeliveryMode.DOOR, deliveryTariffs, tariffsList)
+            ],
+            store2store: [
+                ...cdekService.findTariffs(CdekDeliveryMode.WAREHOUSE, CdekDeliveryMode.WAREHOUSE, deliveryTariffs, tariffsList)
+            ],
+        });
+    } catch (e) {
+        res.status(400).json({
+            error: e.message
+        });
+    }
 };
 
 export const postTest = async (req: Request, res: Response): Promise<void> => {
     (async () => {
         token = await client.get(Class365Resources.DEALS, {
-            id: 10139235,
+            id: 10299816,
             extended: 1,
             with_additional_fields: 1,
-            help: 1
+            // help: 0
         });
         res
             .status(200)

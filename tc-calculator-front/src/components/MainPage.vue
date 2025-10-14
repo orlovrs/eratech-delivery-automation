@@ -1,20 +1,21 @@
 <template>
-  <div class="container my-4" v-if="hasDealId">
+  <div class="container my-4" v-show="hasDealId">
     <GeneralFields
         :state="isGeneralDataLoading"
         :client="client"
         :cities="dictionaries.cities"
         :packages="dictionaries.packages"
         :standards="dictionaries.standards"
-        :boxes="client.boxes"
-        @refresh="fetchAllData"/>
+        :boxes="client.boxes.package"
+        :from-address="info.fromAddress"
+        :is-active="canFetchTariffs"
+        @get-tariffs="fetchAllData"/>
 
     <!-- Delivery company tables -->
-    <div v-if="isCalculating">
+    <div v-show="!isTariffsLoading && !isPackagesLoading && isCalculated">
       <!-- SAMPLE -->
-      <div v-if="isGeneralDataLoading">Загрузка...</div>
-      <div v-if="errorGeneralData" class="text-danger">{{ errorTextSamples }}</div>
-      <div class="mb-5" v-show="!errorTextSamples && !isSamplesLoading">
+      <div v-show="errorTextSample" class="text-danger">{{ errorTextSample }}</div>
+      <div class="mb-5" v-show="errorTextSample !== '' && !isTariffsLoading">
         <h4>Доставка образца</h4>
         <DeliveryTable
             :rows="options.sample.door2door"
@@ -39,9 +40,8 @@
       </div>
 
       <!-- PACKAGE -->
-      <div v-if="isPackagesLoading">Загрузка...</div>
-      <div v-if="errorTextPackages" class="text-danger">{{ errorTextPackages }}</div>
-      <div class="mb-5" v-show="!errorTextPackages && !isPackagesLoading">
+      <div v-show="errorTextPackages" class="text-danger">{{ errorTextPackages }}</div>
+      <div class="mb-5" v-show="errorTextPackages != null && !isTariffsLoading">
         <h4>Доставка тиража</h4>
         <DeliveryTable
             :rows="options.package.door2door"
@@ -85,7 +85,7 @@
     </div>
   </div>
 
-  <div class="container my-4" v-else>
+  <div class="container my-4" v-show="!hasDealId">
     <h4>Не передан ID сделки, страница не будет отображена</h4>
   </div>
 </template>
@@ -102,14 +102,14 @@ export default {
     return {
       // component
       isGeneralDataLoading: false,
-      errorGeneralData: null,
-      isCalculating: false,
-      isSamplesLoading: false,
+      errorGeneralData: '',
+      isCalculated: false,
+      isTariffsLoading: false,
       isPackagesLoading: false,
-      errorTextSamples: null,
-      errorTextPackages: null,
+      errorTextSample: '',
+      errorTextPackages: '',
       hasDealId: false,
-      dealId: null,
+      dealId: '',
       // data
       dictionaries: {
         cities: [],
@@ -118,9 +118,10 @@ export default {
       },
       client: {
         deliveryDate: '',
-        measures: '',
+        sendSample: '',
         standard: '',
         amount: '',
+        phone: '',
         package: '',
         address: {
           zipCode: '',
@@ -128,8 +129,11 @@ export default {
           street: '',
           building: '',
         },
-        boxes: [],
-        comments: ''
+        boxes: {
+          package: [],
+          sample: []
+        },
+        comments: '',
       },
       options: {
         sample: {
@@ -164,8 +168,17 @@ export default {
           deliveryStatus: "Оформлен"
         },
       ],
+      info: {
+        fromAddress: {
+          addressLine: '',
+          zipCode: '',
+          city: ''
+        },
+        defaultMargin: ''
+      }
     }
   },
+
   async mounted() {
     const params = new URLSearchParams(window.location.search);
     this.hasDealId = params.has('deal_id');
@@ -174,8 +187,20 @@ export default {
       this.dealId = params.get('deal_id');
       await this.fetchOptions();
       await this.fetchGeneralData(this.dealId);
+      await this.fetchInfo();
     }
   },
+
+  computed: {
+    canFetchTariffs: {
+      get() {
+        return this.info.fromAddress.zipCode && this.info.fromAddress.city
+            && this.client.address.zipCode && this.client.address.city
+            && !this.isTariffsLoading && !this.isPackagesLoading;
+      }
+    }
+  },
+
   methods: {
     async fetchOptions() {
       try {
@@ -192,7 +217,8 @@ export default {
           return;
         }
 
-        this.dictionaries = await response.json();
+        const json = await response.json();
+        this.dictionaries = json;
       } catch (e) {
         console.error(e);
       } finally {
@@ -214,7 +240,30 @@ export default {
           return;
         }
 
-        this.client = await response.json();
+        const json = await response.json();
+        this.client = json;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.isGeneralDataLoading = false;
+      }
+    },
+    async fetchInfo() {
+      try {
+        this.isGeneralDataLoading = true;
+        this.errorGeneralData = null;
+        const response = await fetch(`http://localhost:3000/api/info`, {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'}
+        });
+
+        if (!response.ok) {
+          this.errorGeneralData = response.data;
+          return;
+        }
+
+        const json = await response.json();
+        this.info = json;
       } catch (e) {
         console.error(e);
       } finally {
@@ -222,51 +271,70 @@ export default {
       }
     },
     async fetchSamplesData() {
-      this.isSamplesLoading = true;
-      this.errorTextSamples = null;
-
-      const response = await fetch('http://localhost:3000/api/calculations/sample', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
-      });
-
-      if (!response.ok) {
-        this.errorTextSamples = response.data;
-        this.isSamplesLoading = false;
-        return;
-      }
-
-      setTimeout(async function (data) {
-        data.isSamplesLoading = false;
-        data.options.sample = await response.json();
-      }, 3000, this);
-    },
-    async fetchPackagesData() {
-      this.isPackagesLoading = true;
-      this.errorTextPackages = null;
+      this.isTariffsLoading = true;
+      this.errorTextSample = '';
 
       const response = await fetch('http://localhost:3000/api/calculations/package', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({})
+        body: JSON.stringify({
+          from: this.info.fromAddress,
+          to: this.client.address,
+          phone: this.client.phone,
+          packages: this.client.boxes.sample || [],
+        })
       });
 
+      const resJson = await response.json();
       if (!response.ok) {
-        this.errorTextPackages = response.data;
-        this.isPackagesLoading = false;
-        return;
+        this.errorTextSample = resJson.error;
+      } else {
+        this.options.sample = resJson;
       }
 
-      setTimeout(async function (data) {
-        data.isPackagesLoading = false;
-        data.options.package = await response.json();
-      }, 3000, this);
+      this.isTariffsLoading = false;
+      this.isCalculated = true;
     },
+
+    async fetchPackagesData() {
+      this.isPackagesLoading = true;
+      this.errorTextPackages = '';
+
+      const response = await fetch('http://localhost:3000/api/calculations/package', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          from: this.info.fromAddress,
+          to: this.client.address,
+          phone: this.client.phone,
+          packages: this.client.boxes.package || [],
+        })
+      });
+
+      const resJson = await response.json();
+      if (!response.ok) {
+        this.errorTextPackages = resJson.error;
+      } else {
+        Object.keys(resJson).forEach(k => {
+          resJson[k] = resJson[k].map(o => {
+            return {
+              ...o,
+              margin: this.info.defaultMargin
+            }
+          })
+        });
+        this.options.package = resJson;
+      }
+
+      this.isPackagesLoading = false;
+      this.isCalculated = true;
+    },
+
     async fetchAllData() {
       await this.fetchSamplesData();
       await this.fetchPackagesData();
     },
+
     sampleSetOption(row) {
       alert(`выбрана опция: ${row.company} - ${row.tariff}`);
     },

@@ -1,8 +1,8 @@
-FROM node:20
+FROM node:slim
 
-COPY package*.json ./
-RUN npm install
 COPY . .
+RUN npm install
+
+CMD ["npm", "run", "start:test"]
 
 EXPOSE 3000
-CMD ["npm", "run", "start:test"]

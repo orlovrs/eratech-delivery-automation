@@ -207,7 +207,7 @@ export default {
         this.isGeneralDataLoading = true;
         this.errorGeneralData = null;
 
-        const response = await fetch(`http://localhost:3000/api/dictionaries`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/dictionaries`, {
           method: 'GET',
           headers: {'Content-Type': 'application/json'}
         });
@@ -229,7 +229,7 @@ export default {
       try {
         this.isGeneralDataLoading = true;
         this.errorGeneralData = null;
-        const response = await fetch(`http://localhost:3000/api/deals/${dealId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/deals/${dealId}`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({})
@@ -252,7 +252,7 @@ export default {
       try {
         this.isGeneralDataLoading = true;
         this.errorGeneralData = null;
-        const response = await fetch(`http://localhost:3000/api/info`, {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/info`, {
           method: 'GET',
           headers: {'Content-Type': 'application/json'}
         });
@@ -274,7 +274,7 @@ export default {
       this.isTariffsLoading = true;
       this.errorTextSample = '';
 
-      const response = await fetch('http://localhost:3000/api/calculations/package', {
+      const response = await fetch('${import.meta.env.VITE_API}/api/calculations/package', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -300,7 +300,7 @@ export default {
       this.isPackagesLoading = true;
       this.errorTextPackages = '';
 
-      const response = await fetch('http://localhost:3000/api/calculations/package', {
+      const response = await fetch('${import.meta.env.VITE_API}/api/calculations/package', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

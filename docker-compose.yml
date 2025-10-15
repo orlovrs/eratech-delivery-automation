@@ -5,7 +5,7 @@ services:
     build: ./tc-calculator-api
     container_name: aziks-api
     ports:
-      - "3000:3000"
+      - "5000:3000"
     restart: always
 
   frontend:

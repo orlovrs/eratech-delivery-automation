@@ -94,7 +94,7 @@ export const postPackageCalculation = async (req: Request, res: Response) => {
         });
     } catch (e: any) {
         res.status(400).json({
-            error: e
+            error: JSON.stringify(e)
         });
     }
 };

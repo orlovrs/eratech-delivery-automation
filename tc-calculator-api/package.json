@@ -4,28 +4,29 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start:local": "set NODE_ENV=local&&ts-node-dev --respawn --transpile-only src/server.ts",
-    "start:test": "set NODE_ENV=vps.test&&ts-node-dev --respawn --transpile-only src/server.ts",
-    "start:prod": "set NODE_ENV=vps&&node ts-node-dev --respawn --transpile-only src/server.ts"
+    "start:local": "set NODE_ENV=local&& nodemon dist/index.js",
+    "start:test": "set NODE_ENV=vps.test&& nodemon dist/index.js",
+    "start:prod": "set NODE_ENV=vps&& nodemon dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.3",
-    "nodemon": "^3.1.10"
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.7.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "i": "^0.3.7",
+    "nodemon": "^3.1.10",
     "npm": "^11.5.2",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }

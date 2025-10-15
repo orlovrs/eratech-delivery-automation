@@ -8,25 +8,25 @@ export enum Class365Resources {
     ADDITIONAL_FIELDS = 'additionfieldslists',
 }
 
-export enum Class365Constants {
-    DOMAIN = Config.CLASS_365_DOMAIN,
-    APP_ID = Config.APP_ID,
-    API_KEY = Config.API_KEY,
+export class Class365Constants {
+    static DOMAIN = Config.CLASS_365_DOMAIN;
+    static APP_ID = Number(Config.APP_ID);
+    static API_KEY = Config.API_KEY;
 
     // Fields
-    deliveryDateFieldId = "3999483",
-    goodStandardFieldId = "3999639",
-    goodsAmountFieldId = "3999564",
-    packageFieldId = "3999529",
-    commentFieldId = "3999580",
-    sendSampleFieldId = "3999571",
-    phoneFieldId = "3999594",
+    static deliveryDateFieldId = "3999483";
+    static goodStandardFieldId = "3999639";
+    static goodsAmountFieldId = "3999564";
+    static packageFieldId = "3999529";
+    static commentFieldId = "3999580";
+    static sendSampleFieldId = "3999571";
+    static phoneFieldId = "3999594";
 
     // Address
-    cityFieldId = "2752795",
-    streetFieldId = "5978038",
-    buildingFieldId = "3999600",
-    zipCodeFieldId = "3999601",
+    static cityFieldId = "2752795";
+    static streetFieldId = "5978038";
+    static buildingFieldId = "3999600";
+    static zipCodeFieldId = "3999601";
 }
 
 export class Options {

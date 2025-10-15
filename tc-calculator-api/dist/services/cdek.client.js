@@ -12,7 +12,6 @@ class CdekClient {
     tariffsUrl = '/v2/calculator/alltariffs';
     tokenUrl = '/v2/oauth/token';
     tariffsAndServices = '/v2/calculator/tariffAndService';
-    token;
     async getToken() {
         const params = new URLSearchParams({
             grant_type: this.grantType,
@@ -29,12 +28,12 @@ class CdekClient {
         return json.access_token;
     }
     async findByCityAndZipCode(city, zipCode) {
-        this.token = await this.getToken();
+        const token = await this.getToken();
         const params = new URLSearchParams({ name: city });
         let response = await fetch(`${this.baseUrl}${this.byCityNameUrl}?${params.toString()}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${this.token}`
+                Authorization: `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -50,7 +49,7 @@ class CdekClient {
             response = await fetch(`${this.baseUrl}${this.zipCodesUrl}?${params.toString()}`, {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${this.token}`
+                    Authorization: `Bearer ${token}`
                 }
             });
             if (!response.ok) {
@@ -65,7 +64,7 @@ class CdekClient {
         throw new Error(`Cannot find zip code ${zipCode} in city ${city}`);
     }
     async getDeliveryOptions(fromCity, toCity, hasInsurance, smsPhone, packages) {
-        this.token = await this.getToken();
+        const token = await this.getToken();
         const services = [];
         if (hasInsurance) {
             services.push({
@@ -82,14 +81,14 @@ class CdekClient {
         let response = await fetch(`${this.baseUrl}${this.tariffsAndServices}`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 from_location: fromCity,
                 to_location: toCity,
                 services,
-                packages: packages.packages.map(p => {
+                packages: packages.packages.map((p) => {
                     return {
                         weight: p.weight * 1000,
                         length: p.length,
@@ -102,11 +101,11 @@ class CdekClient {
         return await response.json();
     }
     async getDeliveryTariffs() {
-        this.token = await this.getToken();
+        const token = await this.getToken();
         let response = await fetch(`${this.baseUrl}${this.tariffsUrl}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${token}`,
             }
         });
         return await response.json();

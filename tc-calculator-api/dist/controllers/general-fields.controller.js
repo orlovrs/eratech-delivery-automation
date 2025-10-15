@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFieldOptions = exports.generalFields = void 0;
-const express_1 = require("express");
 const class365_client_1 = require("../services/class365.client");
 const google_client_1 = require("../services/google.client");
 const client = class365_client_1.Class365Client.getClient();
@@ -30,7 +29,7 @@ const generalFields = (req, res) => {
         const standard = class365_client_1.Options.standards.find(s => s.id == deal[class365_client_1.Class365Constants.goodStandardFieldId])?.value || null;
         const pack = class365_client_1.Options.packages.find(s => s.id == deal[class365_client_1.Class365Constants.packageFieldId])?.value || null;
         const sendSample = class365_client_1.Options.sendSample.find(s => s.id == deal[class365_client_1.Class365Constants.sendSampleFieldId])?.value || null;
-        const sampleDeliveryRequired = sendSample && sendSample != "Нет" && sendSample != "Без образца";
+        const sampleDeliveryRequired = !!sendSample && sendSample != "Нет" && sendSample != "Без образца";
         const hasPackage = !pack && pack != "Нет";
         const boxes = await getBoxesDetails(amount, standard, hasPackage, sampleDeliveryRequired);
         res

@@ -12,8 +12,6 @@ export class CdekClient {
     private tokenUrl = '/v2/oauth/token';
     private tariffsAndServices = '/v2/calculator/tariffAndService';
 
-    private token;
-
     public async getToken() {
         const params = new URLSearchParams({
             grant_type: this.grantType,
@@ -34,13 +32,13 @@ export class CdekClient {
     }
 
     async findByCityAndZipCode(city: string, zipCode: number) {
-        this.token = await this.getToken();
+        const token = await this.getToken();
         const params = new URLSearchParams({ name: city });
 
         let response = await fetch(`${this.baseUrl}${this.byCityNameUrl}?${params.toString()}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${this.token}`
+                Authorization: `Bearer ${token}`
             }
         });
 
@@ -59,7 +57,7 @@ export class CdekClient {
             response = await fetch(`${this.baseUrl}${this.zipCodesUrl}?${params.toString()}`, {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${this.token}`
+                    Authorization: `Bearer ${token}`
                 }
             });
 
@@ -83,7 +81,7 @@ export class CdekClient {
         smsPhone: any,
         packages: any
     ) {
-        this.token = await this.getToken();
+        const token = await this.getToken();
 
         const services = [];
         if (hasInsurance) {
@@ -101,14 +99,14 @@ export class CdekClient {
         let response = await fetch(`${this.baseUrl}${this.tariffsAndServices}`, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 from_location: fromCity,
                 to_location: toCity,
                 services,
-                packages: packages.packages.map(p => {
+                packages: packages.packages.map((p: any) => {
                     return {
                         weight: p.weight * 1000,
                         length: p.length,
@@ -122,11 +120,11 @@ export class CdekClient {
     }
 
     async getDeliveryTariffs() {
-        this.token = await this.getToken();
+        const token = await this.getToken();
         let response = await fetch(`${this.baseUrl}${this.tariffsUrl}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${token}`,
             }
         });
         return await response.json();

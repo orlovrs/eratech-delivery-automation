@@ -12,7 +12,12 @@ export class GoogleClient {
     constructor() {
     }
 
-    public async getBoxesDetails(amount, standard, hasPackage, isSample): Promise<any> {
+    public async getBoxesDetails(
+        amount: number,
+        standard: string,
+        hasPackage: boolean,
+        isSample: boolean
+    ): Promise<any> {
         const response = await fetch(this.getFullUrl(this.packagesEndpoint), {
             method: 'POST',
             body: JSON.stringify({

@@ -92,7 +92,7 @@ export const postPackageCalculation = async (req: Request, res: Response) => {
                 ...cdekService.findTariffs(CdekDeliveryMode.WAREHOUSE, CdekDeliveryMode.WAREHOUSE, deliveryTariffs, tariffsList)
             ],
         });
-    } catch (e) {
+    } catch (e: any) {
         res.status(400).json({
             error: e.message
         });

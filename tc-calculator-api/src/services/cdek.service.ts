@@ -7,17 +7,17 @@ export class CdekService {
         const fullOptionName = `${take.toLowerCase()}-${give.toLowerCase()}`;
         const result = [];
 
-        for (const option of deliveryOptions.tariff_codes.filter(o => o.status == 'true')) {
+        for (const option of deliveryOptions.tariff_codes.filter((o: any) => o.status == 'true')) {
             const code = option.tariff_code;
             const tariff = tariffsList.tariff_codes.find(
-                t => t.delivery_modes.some(dm => dm.tariff_code == code && dm.delivery_mode_name == fullOptionName)
+                (t: any) => t.delivery_modes.some((dm: any) => dm.tariff_code == code && dm.delivery_mode_name == fullOptionName)
             );
             if (!tariff)
                 continue;
 
             const obj = option.result;
-            const smsPrice = obj.services.find(s => s.code == 'SMS')?.total_sum;
-            const insPrice = obj.services.find(s => s.code == 'INSURANCE')?.total_sum;
+            const smsPrice = obj.services.find((s: any) => s.code == 'SMS')?.total_sum;
+            const insPrice = obj.services.find((s: any) => s.code == 'INSURANCE')?.total_sum;
 
             result.push({
                 company: this.companyName,
@@ -32,7 +32,7 @@ export class CdekService {
         return result;
     }
 
-    private convertToDate(date) {
+    private convertToDate(date: string) {
         const p = date.split('-');
         return `${p[2]}.${p[1]}.${p[0]}`;
     }

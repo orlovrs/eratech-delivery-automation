@@ -4,7 +4,7 @@ export declare class GoogleClient {
     private serviceInfoEndpoint;
     private getFullUrl;
     constructor();
-    getBoxesDetails(amount: any, standard: any, hasPackage: any, isSample: any): Promise<any>;
+    getBoxesDetails(amount: number, standard: string, hasPackage: boolean, isSample: boolean): Promise<any>;
     getServiceInfo(): Promise<any>;
 }
 //# sourceMappingURL=google.client.d.ts.map

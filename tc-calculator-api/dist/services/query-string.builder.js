@@ -5,7 +5,7 @@ class QueryStringBuilder {
     static assemble(params, apiKey) {
         return Object.keys(params)
             .sort()
-            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
             .join('&');
     }
 }

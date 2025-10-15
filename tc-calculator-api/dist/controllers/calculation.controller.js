@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postTest = exports.postPackageCalculation = void 0;
-const express_1 = require("express");
 const class365_client_1 = require("../services/class365.client");
 const cdek_client_1 = require("../services/cdek.client");
 const cdek_service_1 = require("../services/cdek.service");
 const enums_1 = require("../enums");
+const config_1 = require("../config");
 const client = class365_client_1.Class365Client.getClient();
 const cdek = new cdek_client_1.CdekClient();
 const cdekService = new cdek_service_1.CdekService();
@@ -87,17 +87,20 @@ const postPackageCalculation = async (req, res) => {
 };
 exports.postPackageCalculation = postPackageCalculation;
 const postTest = async (req, res) => {
-    (async () => {
-        token = await client.get(class365_client_1.Class365Resources.DEALS, {
-            id: 10299816,
-            extended: 1,
-            with_additional_fields: 1,
-            // help: 0
-        });
-        res
-            .status(200)
-            .json(token);
-    })();
+    // (async () => {
+    //     token = await client.get(Class365Resources.DEALS, {
+    //         id: 10299816,
+    //         extended: 1,
+    //         with_additional_fields: 1,
+    //         // help: 0
+    //     });
+    //     res
+    //         .status(200)
+    //         .json(token);
+    // })();
+    res
+        .status(200)
+        .json(config_1.Config.CLASS_365_DOMAIN);
 };
 exports.postTest = postTest;
 //# sourceMappingURL=calculation.controller.js.map

@@ -38,10 +38,10 @@ export const generalFields = (req: Request, res: Response): void => {
             s.id == deal[Class365Constants.sendSampleFieldId]
         )?.value || null;
 
-        const sampleDeliveryRequired = sendSample && sendSample != "Нет" && sendSample != "Без образца";
+        const sampleDeliveryRequired = !!sendSample && sendSample != "Нет" && sendSample != "Без образца";
         const hasPackage = !pack && pack != "Нет";
 
-        const boxes = await getBoxesDetails(amount, standard, hasPackage, sampleDeliveryRequired);
+        const boxes = await getBoxesDetails(amount, standard!, hasPackage, sampleDeliveryRequired);
 
         res
             .status(200)
@@ -76,7 +76,7 @@ export const getFieldOptions = async (req: Request, res: Response): Promise<void
         });
 }
 
-const getBoxesDetails = async (amount, standard, hasPackage, isSample) => {
+const getBoxesDetails = async (amount: number, standard: string, hasPackage: boolean, isSample: boolean) => {
     const client = new GoogleClient();
     return {
         sample: isSample ? await client.getBoxesDetails(amount, standard, hasPackage, true) : null,

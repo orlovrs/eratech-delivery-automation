@@ -10,25 +10,25 @@ var Class365Resources;
     Class365Resources["DEALS"] = "deals";
     Class365Resources["ADDITIONAL_FIELDS"] = "additionfieldslists";
 })(Class365Resources || (exports.Class365Resources = Class365Resources = {}));
-var Class365Constants;
-(function (Class365Constants) {
-    Class365Constants[Class365Constants["DOMAIN"] = config_1.Config.CLASS_365_DOMAIN] = "DOMAIN";
-    Class365Constants[Class365Constants["APP_ID"] = config_1.Config.APP_ID] = "APP_ID";
-    Class365Constants[Class365Constants["API_KEY"] = config_1.Config.API_KEY] = "API_KEY";
+class Class365Constants {
+    static DOMAIN = config_1.Config.CLASS_365_DOMAIN;
+    static APP_ID = Number(config_1.Config.APP_ID);
+    static API_KEY = config_1.Config.API_KEY;
     // Fields
-    Class365Constants["deliveryDateFieldId"] = "3999483";
-    Class365Constants["goodStandardFieldId"] = "3999639";
-    Class365Constants["goodsAmountFieldId"] = "3999564";
-    Class365Constants["packageFieldId"] = "3999529";
-    Class365Constants["commentFieldId"] = "3999580";
-    Class365Constants["sendSampleFieldId"] = "3999571";
-    Class365Constants["phoneFieldId"] = "3999594";
+    static deliveryDateFieldId = "3999483";
+    static goodStandardFieldId = "3999639";
+    static goodsAmountFieldId = "3999564";
+    static packageFieldId = "3999529";
+    static commentFieldId = "3999580";
+    static sendSampleFieldId = "3999571";
+    static phoneFieldId = "3999594";
     // Address
-    Class365Constants["cityFieldId"] = "2752795";
-    Class365Constants["streetFieldId"] = "5978038";
-    Class365Constants["buildingFieldId"] = "3999600";
-    Class365Constants["zipCodeFieldId"] = "3999601";
-})(Class365Constants || (exports.Class365Constants = Class365Constants = {}));
+    static cityFieldId = "2752795";
+    static streetFieldId = "5978038";
+    static buildingFieldId = "3999600";
+    static zipCodeFieldId = "3999601";
+}
+exports.Class365Constants = Class365Constants;
 class Options {
     static standards = [
         { id: "3999374", value: "Высокий гладкий Стандарт" },

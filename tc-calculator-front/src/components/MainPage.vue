@@ -274,7 +274,7 @@ export default {
       this.isTariffsLoading = true;
       this.errorTextSample = '';
 
-      const response = await fetch('${import.meta.env.VITE_API}/api/calculations/package', {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/calculations/package`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -300,7 +300,7 @@ export default {
       this.isPackagesLoading = true;
       this.errorTextPackages = '';
 
-      const response = await fetch('${import.meta.env.VITE_API}/api/calculations/package', {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/calculations/package`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

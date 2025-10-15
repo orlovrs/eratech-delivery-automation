@@ -1,5 +1,7 @@
+import {Config} from "../config";
+
 export class GoogleClient {
-    private appScriptUrl = "https://script.google.com/macros/s/AKfycbzeV3F6XV55f6qiVvVXx4klpUpkTRciXPdbxryCtC5JYTFqR_knC9-CUhhch6Js0HE/exec";
+    private appScriptUrl = Config.GOOGLE_API_URL;
     private packagesEndpoint = "?route=packages";
     private serviceInfoEndpoint = "?route=info";
 

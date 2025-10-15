@@ -1,5 +1,6 @@
 import {QueryStringBuilder} from "./query-string.builder";
 import {Md5Utils} from "./md5.utils";
+import {Config} from "../config";
 
 export enum Class365Resources {
     REPAIR = 'repair',
@@ -8,9 +9,9 @@ export enum Class365Resources {
 }
 
 export enum Class365Constants {
-    DOMAIN = "aziks_butik",
-    APP_ID = 595495,
-    API_KEY = "pKEDUPXlc9hYtdNJTIgV0bNiMNDkSOsz",
+    DOMAIN = Config.CLASS_365_DOMAIN,
+    APP_ID = Config.APP_ID,
+    API_KEY = Config.API_KEY,
 
     // Fields
     deliveryDateFieldId = "3999483",
@@ -1125,9 +1126,9 @@ export class Class365Client {
 
     static getClient(): Class365Client {
         return new Class365Client(
-            Class365Constants.DOMAIN,
-            Class365Constants.APP_ID,
-            Class365Constants.API_KEY
+            Config.CLASS_365_DOMAIN,
+            Number(Config.APP_ID),
+            Config.API_KEY
         );
     }
 

@@ -1,8 +1,10 @@
+import {Config} from "../config";
+
 export class CdekClient {
-    private baseUrl = "https://api.edu.cdek.ru";
+    private baseUrl = Config.CDEK_BASE_API;
     private grantType = 'client_credentials';
-    private clientId = 'wqGwiQx0gg8mLtiEKsUinjVSICCjtTEP';
-    private clientSecret = 'RmAmgvSgSl1yirlz9QupbzOJVqhCxcP5';
+    private clientId = Config.CDEK_CLIENT_ID;
+    private clientSecret = Config.CDEK_CLIENT_SECRET;
 
     private byCityNameUrl = '/v2/location/suggest/cities';
     private zipCodesUrl = '/v2/location/postalcodes';
@@ -90,11 +92,11 @@ export class CdekClient {
                 parameter: 5000
             });
         }
-        if (smsPhone) {
-            // services.push({
-            //     code: "SMS",
-            //     parameter: smsPhone
-            // });
+        if (smsPhone && Config.SMS_ENABLED) {
+            services.push({
+                code: "SMS",
+                parameter: smsPhone
+            });
         }
         let response = await fetch(`${this.baseUrl}${this.tariffsAndServices}`, {
             method: "POST",

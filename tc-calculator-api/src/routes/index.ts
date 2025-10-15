@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import {
     postPackageCalculation,
-    postSamplesCalculation,
     postTest
 } from '../controllers/calculation.controller';
-import {generalFields, getBoxes, getFieldOptions} from "../controllers/general-fields.controller";
+import {generalFields, getFieldOptions} from "../controllers/general-fields.controller";
 import {getServiceInfo} from "../controllers/info.controller";
 
 const router = Router();

@@ -2,7 +2,9 @@ import {Request, Response} from 'express';
 import {Class365Client, Class365Resources} from "../services/class365.client";
 import {CdekClient} from "../services/cdek.client";
 import {CdekService} from "../services/cdek.service";
-import {CdekDeliveryMode, DeliveryMode} from "../enums";
+import {CdekDeliveryMode} from "../enums";
+import {Config} from "../config";
+import path from "path";
 
 const client = Class365Client.getClient();
 const cdek = new CdekClient();
@@ -98,15 +100,18 @@ export const postPackageCalculation = async (req: Request, res: Response) => {
 };
 
 export const postTest = async (req: Request, res: Response): Promise<void> => {
-    (async () => {
-        token = await client.get(Class365Resources.DEALS, {
-            id: 10299816,
-            extended: 1,
-            with_additional_fields: 1,
-            // help: 0
-        });
-        res
+    // (async () => {
+    //     token = await client.get(Class365Resources.DEALS, {
+    //         id: 10299816,
+    //         extended: 1,
+    //         with_additional_fields: 1,
+    //         // help: 0
+    //     });
+    //     res
+    //         .status(200)
+    //         .json(token);
+    // })();
+    res
             .status(200)
-            .json(token);
-    })();
+            .json(Config.CLASS_365_DOMAIN);
 }

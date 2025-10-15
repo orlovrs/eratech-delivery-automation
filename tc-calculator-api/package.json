@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start:local": "set NODE_ENV=local&&ts-node-dev --respawn --transpile-only src/server.ts",
+    "start:test": "set NODE_ENV=vps.test&&ts-node-dev --respawn --transpile-only src/server.ts",
+    "start:prod": "set NODE_ENV=vps&&node ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "nodemon": "^3.1.10"
   },
   "devDependencies": {

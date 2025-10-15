@@ -81,7 +81,7 @@ const postPackageCalculation = async (req, res) => {
     }
     catch (e) {
         res.status(400).json({
-            error: e.message
+            error: JSON.stringify(e)
         });
     }
 };
